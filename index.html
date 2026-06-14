@@ -841,55 +841,6 @@ textarea.finput{resize:vertical;min-height:80px}
   </div>
 </div>
 
-<!-- ── PRESUPUESTO ── -->
-<div class="section">
-  <div class="sec-hdr" onclick="tog('s10')">
-    <div class="sec-icon">💰</div>
-    <span class="sec-title">Presupuesto y prioridades</span>
-    <span class="badge" id="b10">Pendiente</span>
-    <span class="chevron" id="ch10">&#8964;</span>
-  </div>
-  <div class="sec-body" id="s10">
-    <div class="q">
-      <div class="q-label">Presupuesto estimado para el proyecto</div>
-      <div class="radio-row">
-        <button class="rbtn" onclick="pick(this,'bud','p')">Hasta USD 3.000</button>
-        <button class="rbtn" onclick="pick(this,'bud','m')">USD 3.000 – 8.000</button>
-        <button class="rbtn" onclick="pick(this,'bud','g')">USD 8.000 – 20.000</button>
-        <button class="rbtn" onclick="pick(this,'bud','xg')">Más de USD 20.000</button>
-        <button class="rbtn" onclick="pick(this,'bud','ns')">No definido aún</button>
-      </div>
-    </div>
-    <div class="q">
-      <div class="q-label">¿Prefiere implementar todo de una vez o por etapas?</div>
-      <div class="radio-row">
-        <button class="rbtn" onclick="pick(this,'impl','total')">Todo junto</button>
-        <button class="rbtn" onclick="pick(this,'impl','fases')">Por etapas / fases</button>
-        <button class="rbtn" onclick="pick(this,'impl','ns')">Sin preferencia</button>
-      </div>
-    </div>
-    <div class="q">
-      <div class="q-label">Módulo más prioritario</div>
-      <div class="radio-row">
-        <button class="rbtn" onclick="pick(this,'prio','seg')">Seguridad</button>
-        <button class="rbtn" onclick="pick(this,'prio','luz')">Iluminación</button>
-        <button class="rbtn" onclick="pick(this,'prio','cli')">Climatización</button>
-        <button class="rbtn" onclick="pick(this,'prio','acc')">Accesos</button>
-        <button class="rbtn" onclick="pick(this,'prio','ent')">Entretenimiento</button>
-        <button class="rbtn" onclick="pick(this,'prio','ene')">Energía</button>
-      </div>
-    </div>
-    <div class="q">
-      <div class="q-label">Fecha estimada de inicio</div>
-      <input class="finput" type="text" placeholder="Ej: Agosto 2026 / Al inicio de la obra / Inmediato" oninput="calcProg()">
-    </div>
-    <div class="q">
-      <div class="q-label">Observaciones generales / preguntas para el técnico</div>
-      <textarea class="finput" placeholder="Cualquier detalle, duda o requerimiento especial..." oninput="calcProg()"></textarea>
-    </div>
-  </div>
-</div>
-
 <!-- ── S11: MASCOTAS (visible solo si tienen mascotas) ── -->
 <div class="section" id="sec_mascotas" style="display:none">
   <div class="sec-hdr" onclick="tog('s11')">
@@ -1016,8 +967,8 @@ function modTog(el,sub,showSub){
 function calcProg(){
   const tieneMascotas=st.mascotas==='si';
   document.getElementById('sec_mascotas').style.display=tieneMascotas?'block':'none';
-  const secs=['s1','s2','s3','s4','s5','s6','s7','s8','s9','s10'];
-  if(tieneMascotas) secs.push('s11');
+  const secs=['s1','s2','s3','s4','s5','s6','s7','s8','s9'];
+  if(tieneMascotas) secs.push('s10');
   let done=0;
   secs.forEach((id,i)=>{
     const b=document.getElementById(id);
