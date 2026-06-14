@@ -65,6 +65,26 @@ textarea.finput{resize:vertical;min-height:80px}
 .obra-block .q-label{color:#185FA5;font-size:12px}
 .btn-submit{width:100%;margin-top:1.4rem;padding:13px;background:#3D3D3D;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s}
 .btn-submit:hover{background:#5F5E5A}
+.id-block{background:#fff;border:1px solid #D9D9D9;border-radius:10px;padding:1.2rem 1.4rem;margin-bottom:1rem}
+.id-block h2{font-size:14px;font-weight:600;color:#1A1A1A;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.id-block p{font-size:12px;color:#6B6B6B;margin-bottom:1rem}
+.id-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.id-field label{display:block;font-size:12px;font-weight:600;color:#6B6B6B;margin-bottom:4px}
+.id-field input{width:100%;border:1px solid #D9D9D9;border-radius:8px;padding:8px 12px;font-size:13px;background:#fff;color:#1A1A1A;font-family:inherit;transition:border .15s}
+.id-field input:focus{outline:none;border-color:#3D3D3D}
+.id-field input.error{border-color:#D85A30;background:#FFF5F2}
+.id-field.full{grid-column:1/-1}
+.id-req{color:#D85A30;margin-left:2px}
+.btn-iniciar{width:100%;margin-top:1rem;padding:11px;background:#3D3D3D;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s}
+.btn-iniciar:hover{background:#5F5E5A}
+.form-main{display:none}
+.form-main.show{display:block}
+.id-summary{background:#F8F8F8;border:1px solid #D9D9D9;border-radius:8px;padding:8px 12px;margin-bottom:1rem;font-size:12px;color:#3D3D3D;display:flex;align-items:center;gap:8px}
+.id-summary span{font-weight:600}
+.id-summary a{margin-left:auto;font-size:11px;color:#6B6B6B;cursor:pointer;text-decoration:underline}
+.err-msg{font-size:11px;color:#D85A30;margin-top:3px;display:none}
+.err-msg.show{display:block}
+@media(max-width:500px){.id-grid{grid-template-columns:1fr}}
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center}
 .modal-bg.show{display:flex}
 .modal{background:#fff;border-radius:14px;padding:2rem;max-width:440px;width:90%;text-align:center}
@@ -86,10 +106,51 @@ textarea.finput{resize:vertical;min-height:80px}
   </div>
 </div>
 
-<div class="progress-wrap">
+<div class="progress-wrap" id="prog_bar" style="display:none">
   <div class="progress-label"><span>Progreso del formulario</span><span id="pct">0%</span></div>
   <div class="track"><div class="fill" id="fill"></div></div>
 </div>
+
+<!-- ── IDENTIFICACIÓN ── -->
+<div class="id-block" id="bloque_id">
+  <h2>📋 Datos de identificación</h2>
+  <p>Completá tus datos antes de comenzar. Todos los campos marcados con <span style="color:#D85A30">*</span> son obligatorios.</p>
+  <div class="id-grid">
+    <div class="id-field">
+      <label>Nombre <span class="id-req">*</span></label>
+      <input type="text" id="id_nombre" placeholder="Ej: María">
+      <div class="err-msg" id="err_nombre">Por favor ingresá tu nombre.</div>
+    </div>
+    <div class="id-field">
+      <label>Apellido <span class="id-req">*</span></label>
+      <input type="text" id="id_apellido" placeholder="Ej: González">
+      <div class="err-msg" id="err_apellido">Por favor ingresá tu apellido.</div>
+    </div>
+    <div class="id-field full">
+      <label>Correo electrónico <span class="id-req">*</span></label>
+      <input type="email" id="id_email" placeholder="Ej: maria@gmail.com">
+      <div class="err-msg" id="err_email">Ingresá un correo electrónico válido.</div>
+    </div>
+    <div class="id-field full">
+      <label>Dirección de la nueva obra <span class="id-req">*</span></label>
+      <input type="text" id="id_direccion" placeholder="Ej: Sarmiento 450, General Villegas">
+      <div class="err-msg" id="err_direccion">Por favor ingresá la dirección de la obra.</div>
+    </div>
+    <div class="id-field full">
+      <label>Arquitecto de referencia</label>
+      <input type="text" id="id_arquitecto" placeholder="Ej: Arq. Laura Martínez / Estudio Nido Arquitectura">
+    </div>
+  </div>
+  <button class="btn-iniciar" onclick="iniciarFormulario()">Comenzar relevamiento →</button>
+</div>
+
+<!-- Resumen identificación (visible una vez iniciado) -->
+<div class="id-summary" id="resumen_id" style="display:none">
+  <span id="resumen_texto">—</span>
+  <a onclick="editarId()">Editar datos</a>
+</div>
+
+<div class="form-main" id="form_main">
 
 <!-- ── S1: USO Y FAMILIA ── -->
 <div class="section">
@@ -989,10 +1050,48 @@ textarea.finput{resize:vertical;min-height:80px}
     <p style="margin-top:.5rem;font-size:12px;color:#888">📞 Ante consultas urgentes, contáctenos por WhatsApp.</p>
     <button class="modal-close" onclick="document.getElementById('modal').classList.remove('show')">Cerrar</button>
   </div>
-</div>
+</div><!-- /form_main -->
+
+</div><!-- /page -->
 
 <script>
 const st={};
+
+function iniciarFormulario(){
+  const nombre=document.getElementById('id_nombre').value.trim();
+  const apellido=document.getElementById('id_apellido').value.trim();
+  const email=document.getElementById('id_email').value.trim();
+  const direccion=document.getElementById('id_direccion').value.trim();
+  let ok=true;
+  // Validar campos obligatorios
+  [['nombre',nombre],['apellido',apellido],['email',email],['direccion',direccion]].forEach(([k,v])=>{
+    const inp=document.getElementById('id_'+k);
+    const err=document.getElementById('err_'+k);
+    const vacio=!v||(k==='email'&&!/^[^@]+@[^@]+\.[^@]+$/.test(v));
+    inp.classList.toggle('error',vacio);
+    if(err) err.classList.toggle('show',vacio);
+    if(vacio) ok=false;
+  });
+  if(!ok) return;
+  // Mostrar resumen y formulario
+  const arq=document.getElementById('id_arquitecto').value.trim();
+  document.getElementById('resumen_texto').innerHTML=
+    `<span>${nombre} ${apellido}</span> &nbsp;·&nbsp; ${email} &nbsp;·&nbsp; ${direccion}`+
+    (arq?` &nbsp;·&nbsp; Arq: ${arq}`:'');
+  document.getElementById('bloque_id').style.display='none';
+  document.getElementById('resumen_id').style.display='flex';
+  document.getElementById('prog_bar').style.display='block';
+  document.getElementById('form_main').classList.add('show');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function editarId(){
+  document.getElementById('bloque_id').style.display='block';
+  document.getElementById('resumen_id').style.display='none';
+  document.getElementById('prog_bar').style.display='none';
+  document.getElementById('form_main').classList.remove('show');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
 
 function pick(el,k,v){
   el.closest('.radio-row').querySelectorAll('.rbtn').forEach(b=>b.classList.remove('sel'));
