@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relevamiento Domótica Villegas</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#F2F2F2;color:#1A1A1A;font-size:15px}
+.page{max-width:740px;margin:0 auto;padding:1.5rem 1rem 4rem}
+.header{background:#3D3D3D;border-radius:12px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;display:flex;align-items:center;gap:1rem}
+.header-icon{width:48px;height:48px;background:#5F5E5A;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:24px}
+.header h1{color:#fff;font-size:18px;font-weight:600;margin-bottom:3px}
+.header p{color:#D9D9D9;font-size:13px}
+.progress-wrap{background:#fff;border:1px solid #D9D9D9;border-radius:10px;padding:.9rem 1.2rem;margin-bottom:1.2rem}
+.progress-label{font-size:12px;color:#6B6B6B;margin-bottom:7px;display:flex;justify-content:space-between}
+.track{height:7px;background:#F2F2F2;border-radius:4px;overflow:hidden}
+.fill{height:100%;background:#3D3D3D;border-radius:4px;transition:width .35s ease;width:0%}
+.section{background:#fff;border:1px solid #D9D9D9;border-radius:10px;margin-bottom:.9rem;overflow:hidden}
+.sec-hdr{padding:.85rem 1.1rem;display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none;transition:background .15s}
+.sec-hdr:hover{background:#F8F8F8}
+.sec-icon{width:34px;height:34px;background:#3D3D3D;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.sec-title{font-size:14px;font-weight:600;flex:1;color:#1A1A1A}
+.badge{font-size:11px;padding:2px 9px;border-radius:20px;background:#F2F2F2;color:#6B6B6B;border:1px solid #D9D9D9;white-space:nowrap}
+.badge.done{background:#e2efda;color:#3B6D11;border-color:#9FE1CB}
+.badge.skip{background:#FFF2CC;color:#854F0B;border-color:#FAC775}
+.chevron{font-size:18px;color:#6B6B6B;transition:transform .2s;line-height:1}
+.chevron.open{transform:rotate(180deg)}
+.sec-body{display:none;padding:0 1.1rem 1.1rem}
+.sec-body.open{display:block}
+.q{margin-top:1rem}
+.q-label{font-size:13px;font-weight:600;color:#1A1A1A;margin-bottom:4px}
+.q-hint{font-size:12px;color:#6B6B6B;margin-bottom:6px;font-style:italic}
+.radio-row{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:3px}
+.rbtn{border:1px solid #D9D9D9;border-radius:8px;padding:6px 14px;font-size:13px;cursor:pointer;background:#fff;color:#1A1A1A;transition:all .12s;font-family:inherit}
+.rbtn:hover{background:#F2F2F2}
+.rbtn.sel{background:#3D3D3D;color:#fff;border-color:#3D3D3D}
+.chk-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:5px;margin-top:4px}
+.chk-item{display:flex;align-items:center;gap:8px;padding:6px 10px;border:1px solid #E8E8E8;border-radius:8px;cursor:pointer;font-size:13px;color:#1A1A1A;background:#fff;transition:background .12s}
+.chk-item:hover{background:#F8F8F8}
+.chk-item input{accent-color:#3D3D3D;width:15px;height:15px;cursor:pointer;flex-shrink:0}
+.branch{margin-top:9px;padding:11px 14px;background:#F8F8F8;border-left:3px solid #3D3D3D;border-radius:0 8px 8px 0;display:none}
+.branch.show{display:block}
+.branch .q-label{color:#3D3D3D}
+.finput{width:100%;border:1px solid #D9D9D9;border-radius:8px;padding:8px 12px;font-size:13px;background:#fff;color:#1A1A1A;font-family:inherit;transition:border .15s}
+.finput:focus{outline:none;border-color:#3D3D3D}
+textarea.finput{resize:vertical;min-height:80px}
+.divider{height:1px;background:#F0F0F0;margin:13px 0}
+.mod-row{display:flex;align-items:center;gap:10px;padding:9px 0}
+.mod-label{flex:1;font-size:13px;font-weight:600;color:#1A1A1A}
+.tog-wrap{display:flex;gap:6px}
+.tog{border:1px solid #D9D9D9;border-radius:8px;padding:4px 14px;font-size:12px;cursor:pointer;background:#fff;color:#6B6B6B;font-family:inherit;transition:all .12s}
+.tog.y.sel{background:#e2efda;color:#27500A;border-color:#9FE1CB;font-weight:600}
+.tog.n.sel{background:#FCE4D6;color:#993C1D;border-color:#F5C4B3;font-weight:600}
+.mod-sub{margin-top:7px;display:none}
+.mod-sub.show{display:block}
+.nota{font-size:12px;color:#6B6B6B;padding:8px 11px;background:#F8F8F8;border-radius:8px;margin-top:7px;border:1px solid #E8E8E8}
+.nota span{font-weight:600;color:#3D3D3D}
+.btn-submit{width:100%;margin-top:1.4rem;padding:13px;background:#3D3D3D;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s}
+.btn-submit:hover{background:#5F5E5A}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center}
+.modal-bg.show{display:flex}
+.modal{background:#fff;border-radius:14px;padding:2rem;max-width:440px;width:90%;text-align:center}
+.modal h2{font-size:18px;margin-bottom:.5rem;color:#1A1A1A}
+.modal p{font-size:13px;color:#6B6B6B;margin-bottom:1.2rem;line-height:1.6}
+.modal-icon{font-size:40px;margin-bottom:.8rem}
+.modal-close{padding:9px 24px;background:#3D3D3D;color:#fff;border:none;border-radius:8px;font-size:14px;cursor:pointer;font-family:inherit}
+@media(max-width:500px){.chk-grid{grid-template-columns:1fr}.radio-row{flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="header">
+  <div class="header-icon">🏠</div>
+  <div>
+    <h1>Formulario de relevamiento</h1>
+    <p>Proyecto de domótica residencial &nbsp;·&nbsp; Domótica Villegas &nbsp;·&nbsp; General Villegas</p>
+  </div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-label"><span>Progreso del formulario</span><span id="pct">0%</span></div>
+  <div class="track"><div class="fill" id="fill"></div></div>
+</div>
+
+<!-- ── S1: USO Y FAMILIA ── -->
+<div class="section">
+  <div class="sec-hdr" onclick="tog('s1')">
+    <div class="sec-icon">👨‍👩‍👧‍👦</div>
+    <span class="sec-title">Uso de la vivienda y familia</span>
+    <span class="badge" id="b1">Pendiente</span>
+    <span class="chevron open" id="ch1">&#8964;</span>
+  </div>
+  <div class="sec-body open" id="s1">
+    <div class="q">
+      <div class="q-label">¿Conoce qué es la domótica y qué alcance puede tener? *</div>
+      <div class="q-hint">Importante definirlo antes de comenzar la obra.</div>
+      <div class="radio-row">
+        <button class="rbtn" onclick="pick(this,'dom','si');show('b_dom_si',true);show('b_dom_no',false)">Sí, lo conozco</button>
+        <button class="rbtn" onclick="pick(this,'dom','algo');show('b_dom_si',true);show('b_dom_no',false)">Algo sé</button>
+        <button class="rbtn" onclick="pick(this,'dom','no');show('b_dom_si',false);show('b_dom_no',true)">No lo conozco</button>
+      </div>
+      <div class="branch" id="b_dom_si">
+        <div class="q-label">¿Qué aspectos le interesan más?</div>
+        <div class="chk-grid">
+          <label class="chk-item"><input type="checkbox"> Seguridad y accesos</label>
+          <label class="chk-item"><input type="checkbox"> Ahorro energético</label>
+          <label class="chk-item"><input type="checkbox"> Confort y automatización</label>
+          <label class="chk-item"><input type="checkbox"> Control remoto desde celular</label>
+          <label class="chk-item"><input type="checkbox"> Entretenimiento</label>
+          <label class="chk-item"><input type="checkbox"> Asistencia a adultos mayores</label>
+        </div>
+      </div>
+      <div class="branch" id="b_dom_no">
+        <div class="nota"><span>Recomendación:</span> Se sugiere una reunión informativa antes de definir el alcance.</div>
+        <div class="q" style="margin-top:8px">
+          <div class="q-label">¿Desea solicitar una reunión informativa previa?</div>
+          <div class="radio-row">
+            <button class="rbtn" onclick="pick(this,'reunion','si')">Sí, la solicito</button>
+            <button class="rbtn" onclick="pick(this,'reunion','no')">No, quiero avanzar igual</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="q">
+      <div class="q-label">¿Cuántas personas viven en la vivienda?</div>
+      <input class="finput" type="number" min="1" max="20" placeholder="Ej: 4" oninput="calcProg()">
+    </div>
+    <div class="q">
+      <div class="q-label">Edades aproximadas de los integrantes</div>
+      <input class="finput" type="text" placeholder="Ej: 45, 43, 18, 15 años" oninput="calcProg()">
+    </div>
+    <div class="divider"></div>
+    <div class="q">
+      <div class="q-label">¿Hay adultos mayores (65+) o personas con movilidad reducida?</div>
+      <div class="radio-row">
+        <button class="rbtn" onclick="pick(this,'mayor','si');show('b_mayor',true)">Sí</button>
+        <button class="rbtn" onclick="pick(this,'mayor','no');show('b_mayor',false)">No</button>
+      </div>
+      <div class="branch" id="b_mayor">
+        <div class="q-label">Consideraciones especiales requeridas</div>
+        <div class="chk-grid">
+          <label class="chk-item"><input type="checkbox"> Teclas a baja altura</label>
+          <label class="chk-item"><input type="checkbox"> Control por voz (Siri)</label>
+          <label class="chk-item"><input type="checkbox"> Iluminación nocturna automática</label>
+          <label class="chk-item"><input type="checkbox"> Alertas a familiares</label>
+          <label class="chk-item"><input type="checkbox"> Sensores de caída / movimiento</label>
+        </div>
+      </div>
+    </div>
+    <div class="q">
+      <div class="q-label">¿Algún integrante tiene discapacidad?</div>
+      <div class="radio-row">
+        <button class="rbtn" onclick="pick(this,'disc','si');show('b_disc',true)">Sí</button>
+        <button class="rbtn" onclick="pick(this,'disc','no');show('b_disc',false)">No</button>
+      </div>
+      <div class="branch" id="b_disc">
+        <div class="q-label">Tipo de discapacidad</div>
+        <div class="chk-grid">
+          <label class="chk-item"><input type="checkbox"> Motriz / movilidad reducida</label>
+          <label class="chk-item"><input type="checkbox"> Visual</label>
+          <label class="chk-item"><input type="checkbox"> Auditiva</label>
+          <label class="chk-item"><input type="checkbox"> Cognitiva</label>
+          <label class="chk-item"><input type="checkbox"> Comunicación / habla</label>
+          <label class="chk-item"><input type="checkbox"> Otra</label>
+        </div>
+        <div class="q" style="margin-top:8px">
+          <input class="finput" type="text" placeholder="Detalles adicionales (opcional)">
+        </div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="q">
+      <div class="q-label">¿Trabajan desde casa (home office)?</div>
+      <div class="radio-row">
+        <button class="rbtn" onclick="pick(this,'ho','si');show('b_ho',true)">Sí</button>
+        <button class="rbtn" onclick="pick(this,'ho','no');show('b_ho',false)">No</button>
+      </div>
+      <div class="branch" id="b_ho">
+        <div class="q-label">¿Cuántos espacios de home office?</div>
+        <div class="radio-row">
+          <button class="rbtn" onclick="pick(this,'ho_n','1')">1</button>
+          <button class="rbtn" onclick="pick(this,'ho_n','2')">2</button>
+          <button class="rbtn" onclick="pick(this,'ho_n','3+')">3 o más</button>
+        </div>
+      </div>
+    </div>
+    <div class="q">
+      <div class="q-label">¿Qué rutinas quisieran automatizar?</div>
+      <div class="chk-grid">
+        <label class="chk-item"><input type="checkbox"> Subir / bajar persianas</label>
+        <label class="chk-item"><input type="checkbox"> Encender / apagar luces</label>
+        <label class="chk-item"><input type="checkbox"> Control de climatización</label>
+        <label class="chk-item"><input type="checkbox"> Rutina llegada a casa</label>
+        <label class="chk-item"><input type="checkbox"> Rutina "buenas noches"</label>
+        <label class="chk-item"><input type="checkbox"> Modo vacaciones / seguridad</label>
+        <label class="chk-item"><input type="checkbox"> Riego del jardín</label>
+        <label class="chk-item"><input type="checkbox"> Apertura automática del garaje</label>
+      </div>
+    </div>
+    <div class="q">
+      <div class="q-label">¿Viajan seguido? *</div>
+      <div class="q-hint">Importante para definir el nivel de seguridad y control remoto.</div>
+      <div class="radio-row">
+        <button class="rbtn" onclick="pick(this,'viaje','si');show('b_viaje',true)">Sí, con frecuencia</button>
+        <button class="rbtn" onclick="pick(this,'viaje','oc');show('b_viaje',true)">Ocasionalmente</button>
+        <button class="rbtn" onclick="pick(this,'viaje','no');show('b_viaje',false)">Casi nunca</button>
+      </div>
+      <div class="branch" id="b_viaje">
+        <div class="chk-grid">
+          <label class="chk-item"><input type="checkbox"> Control total desde el celular</label>
+          <label class="chk-item"><input type="checkbox"> Simulación de presencia (luces)</label>
+          <label class="chk-item"><input type="checkbox"> Notificaciones de movimiento</label>
+          <label class="chk-item"><input type="checkbox"> Acceso a cámaras en vivo</label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── S2: ESTADO ── -->
+<div class="section">
+  <div class="sec-hdr" onclick="tog('s2')">
+    <div class="sec-icon">🏗️</div>
+    <span class="sec-title">Estado actual de la vivienda</span>
+    <span class="badge" id="b2">Pendiente</span>
+    <span class="chevron" id="ch2">&#8964;</span>
+  </div>
+  <div class="sec-body" id="s2">
+    <div class="q">
+      <div class="q-label">¿En qué etapa se encuentra la vivienda? *</div>
+      <div class="radio-row">
+        <button class="rbtn" onclick="pick(this,'estado','diseno');setEstado('diseno')">En diseño / planos</button>
+        <button class="rbtn" onclick="pick(this,'estado','obra');setEstado('obra')">En construcción</button>
+        <button class="rbtn" onclick="pick(this,'estado','habitada');setEstado('habitada')">Habitada</button>
+      </div>
+      <div class="branch" id="b_diseno">
+        <div class="nota"><span>Etapa ideal:</span> permite prever cableado, ductos y tableros desde el inicio.</div>
+        <div class="q" style="margin-top:8px"><div class="q-label">¿Tiene arquitecto o estudio a cargo?</div>
+          <div class="radio-row">
+            <button class="rbtn" onclick="pick(this,'arq','si')">Sí</button>
+            <button class="rbtn" onclick="pick(this,'arq','no')">No</button>
+          </div>
+          <input class="finput" style="margin-top:6px" type="text" placeholder="Nombre del estudio / arquitecto (opcional)">
+        </div>
+        <div class="q"><div class="q-label">¿Tiene planos digitales disponibles?</div>
+          <div class="radio-row">
+            <button class="rbtn" onclick="pick(this,'planos','si')">Sí (DWG / PDF)</button>
+            <button class="rbtn" onclick="pick(this,'planos','no')">No aún</button>
+          </div>
+        </div>
+      </div>
+      <div class="branch" id="b_obra">
+        <div class="nota"><span>En obra:</span> se puede integrar el cableado coordinando con el electricista.</div>
+        <div class="q" style="margin-top:8px"><div class="q-label">% de avance aproximado de la obra</div>
+          <div class="radio-row">
+            <button class="rbtn" onclick="pick(this,'avance','25')">Menos del 25%</button>
+            <button class="rbtn" onclick="pick(this,'avance','50')">25% – 60%</button>
+            <button class="rbtn" onclick="pick(this,'avance','75')">60% – 80%</button>
+            <button class="rbtn" onclick="pick(this,'avance','90')">Más del 80%</button>
+          </div>
+        </div>
+        <div class="q"><div class="q-label">¿El electricista ya realizó instalaciones?</div>
+          <div class="radio-row">
+            <button class="rbtn" onclick="pick(this,'elec','si')">Sí</button>
+            <button class="rbtn" onclick="pick(this,'elec','no')">No</button>
+            <button class="rbtn" onclick="pick(this,'elec','parte')">En parte</button>
+          </div>
+        </div>
+      </div>
+      <div class="branch" id="b_habitada">
+        <div class="nota"><span>Vivienda habitada:</span> se priorizan soluciones inalámbricas para evitar obras mayores.</div>
+        <div class="q" style="margin-top:8px"><div class="q-label">¿Acepta pequeñas obras civiles?</div>
+          <div class="radio-row">
+            <button class="rbtn" onclick="pick(this,'obras','si')">Sí, acepto obras</button>
+            <button class="rbtn" onclick="pick(this,'obras','no')">Prefiero sin obras</button>
+            <button class="rbtn" onclick="pick(this,'obras','min')">Solo obras mínimas</button>
+          </div>
+        </div>
+        <div class="q"><div class="q-label">Tipo de cableado actual</div>
+          <div class="radio-row">
+            <button class="rbtn" onclick="pick(this,'cab','mono')">Monofásico 220V</button>
+            <button class="rbtn" onclick="pick(this,'cab','tri')">Trifásico</button>
+            <button class="rbtn" onclick="pick(this,'cab','ns')">No sé</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="q">
+      <div class="q-label">Superficie aproximada</div>
+      <div class="radio-row">
+        <button class="rbtn" onclick="pick(this,'sup','p')">Hasta 80 m²</button>
+        <button class="rbtn" onclick="pick(this,'sup','m')">80 – 150 m²</button>
+        <button class="rbtn" onclick="pick(this,'sup','g')">150 – 250 m²</button>
+        <button class="rbtn" onclick="pick(this,'sup','xg')">Más de 250 m²</button>
+      </div>
+    </div>
+    <div class="q">
+      <div class="q-label">Cantidad de plantas</div>
+      <div class="radio-row">
+        <button class="rbtn" onclick="pick(this,'pisos','1')">1 planta</button>
+        <button class="rbtn" onclick="pick(this,'pisos','2')">2 plantas</button>
+        <button class="rbtn" onclick="pick(this,'pisos','3+')">3 o más</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── MÓDULOS ── -->
+<div class="section">
+  <div class="sec-hdr" onclick="tog('s3')">
+    <div class="sec-icon">💡</div>
+    <span class="sec-title">Iluminación inteligente</span>
+    <span class="badge" id="b3">Pendiente</span>
+    <span class="chevron" id="ch3">&#8964;</span>
+  </div>
+  <div class="sec-body" id="s3">
+    <div class="mod-row">
+      <span class="mod-label">¿Incluir iluminación inteligente?</span>
+      <div class="tog-wrap">
+        <button class="tog y" onclick="modTog(this,'ms3',true)">Sí</button>
+        <button class="tog n" onclick="modTog(this,'ms3',false)">No</button>
+      </div>
+    </div>
+    <div class="mod-sub" id="ms3">
+      <div class="divider"></div>
+      <div class="chk-grid">
+        <label class="chk-item"><input type="checkbox"> Control por escenas (cine, noche, relax)</label>
+        <label class="chk-item"><input type="checkbox"> Control por tecla + celular</label>
+        <label class="chk-item"><input type="checkbox"> Dimmers en todos los ambientes</label>
+        <label class="chk-item"><input type="checkbox"> Dimmers solo en algunos ambientes</label>
+        <label class="chk-item"><input type="checkbox"> Iluminación decorativa / tiras LED</label>
+        <label class="chk-item"><input type="checkbox"> Control manual + app / voz</label>
+      </div>
+      <div class="q" style="margin-top:10px">
+        <div class="q-label">Ambientes prioritarios</div>
+        <div class="chk-grid">
+          <label class="chk-item"><input type="checkbox"> Living / comedor</label>
+          <label class="chk-item"><input type="checkbox"> Cocina</label>
+          <label class="chk-item"><input type="checkbox"> Dormitorio principal</label>
+          <label class="chk-item"><input type="checkbox"> Dormitorios hijos</label>
+          <label class="chk-item"><input type="checkbox"> Baños</label>
+          <label class="chk-item"><input type="checkbox"> Jardín / exterior</label>
+          <label class="chk-item"><input type="checkbox"> Garaje</label>
+          <label class="chk-item"><input type="checkbox"> Home office</label>
+        </div>
+      </div>
+      <div class="q" style="margin-top:10px">
+        <div class="q-label">Observaciones</div>
+        <input class="finput" type="text" placeholder="Detalles adicionales sobre iluminación...">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-hdr" onclick="tog('s4')">
+    <div class="sec-icon">🌡️</div>
+    <span class="sec-title">Climatización</span>
+    <span class="badge" id="b4">Pendiente</span>
+    <span class="chevron" id="ch4">&#8964;</span>
+  </div>
+  <div class="sec-body" id="s4">
+    <div class="mod-row">
+      <span class="mod-label">¿Incluir climatización inteligente?</span>
+      <div class="tog-wrap">
+        <button class="tog y" onclick="modTog(this,'ms4',true)">Sí</button>
+        <button class="tog n" onclick="modTog(this,'ms4',false)">No</button>
+      </div>
+    </div>
+    <div class="mod-sub" id="ms4">
+      <div class="divider"></div>
+      <div class="q-label" style="margin-bottom:6px">Sistema instalado o a instalar</div>
+      <div class="chk-grid">
+        <label class="chk-item"><input type="checkbox"> Aire central con ducto</label>
+        <label class="chk-item"><input type="checkbox"> Splits / minisplit</label>
+        <label class="chk-item"><input type="checkbox"> Losa / suelo radiante</label>
+        <label class="chk-item"><input type="checkbox"> Caldera central</label>
+        <label class="chk-item"><input type="checkbox"> Calefactores fijos</label>
+        <label class="chk-item"><input type="checkbox"> Aún no decidido</label>
+      </div>
+      <div class="chk-grid" style="margin-top:8px">
+        <label class="chk-item"><input type="checkbox"> Control inteligente por ambiente</label>
+        <label class="chk-item"><input type="checkbox"> Programación horaria / semanal</label>
+        <label class="chk-item"><input type="checkbox"> Prioridad ahorro energético</label>
+        <label class="chk-item"><input type="checkbox"> Prioridad confort máximo</label>
+      </div>
+      <div class="q" style="margin-top:10px">
+        <div class="q-label">Marca / modelo actual y cantidad de ambientes</div>
+        <input class="finput" type="text" placeholder="Ej: Split Samsung 3000 frigorías, 4 ambientes">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-hdr" onclick="tog('s5')">
+    <div class="sec-icon">🔐</div>
+    <span class="sec-title">Seguridad</span>
+    <span class="badge" id="b5">Pendiente</span>
+    <span class="chevron" id="ch5">&#8964;</span>
+  </div>
+  <div class="sec-body" id="s5">
+    <div class="mod-row">
+      <span class="mod-label">¿Incluir seguridad inteligente?</span>
+      <div class="tog-wrap">
+        <button class="tog y" onclick="modTog(this,'ms5',true)">Sí</button>
+        <button class="tog n" onclick="modTog(this,'ms5',false)">No</button>
+      </div>
+    </div>
+    <div class="mod-sub" id="ms5">
+      <div class="divider"></div>
+      <div class="chk-grid">
+        <label class="chk-item"><input type="checkbox"> Sistema de alarma integrado</label>
+        <label class="chk-item"><input type="checkbox"> Cámaras exteriores</label>
+        <label class="chk-item"><input type="checkbox"> Cámaras interiores</label>
+        <label class="chk-item"><input type="checkbox"> Cerradura inteligente</label>
+        <label class="chk-item"><input type="checkbox"> Portero / videoportero</label>
+        <label class="chk-item"><input type="checkbox"> Sensor de humo</label>
+        <label class="chk-item"><input type="checkbox"> Sensor de gas</label>
+        <label class="chk-item"><input type="checkbox"> Sensor de inundación</label>
+        <label class="chk-item"><input type="checkbox"> Sensor monóxido de carbono</label>
+        <label class="chk-item"><input type="checkbox"> Sensores puertas / ventanas</label>
+      </div>
+      <div class="q" style="margin-top:10px">
+        <div class="q-label">¿Tiene o tuvo sistema de alarma previo?</div>
+        <div class="radio-row">
+          <button class="rbtn" onclick="pick(this,'alarma','si')">Sí</button>
+          <button class="rbtn" onclick="pick(this,'alarma','no')">No</button>
+        </div>
+        <input class="finput" style="margin-top:6px" type="text" placeholder="Empresa / servicio de monitoreo (si tiene)">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-hdr" onclick="tog('s6')">
+    <div class="sec-icon">💧</div>
+    <span class="sec-title">Agua y energía</span>
+    <span class="badge" id="b6">Pendiente</span>
+    <span class="chevron" id="ch6">&#8964;</span>
+  </div>
+  <div class="sec-body" id="s6">
+    <div class="mod-row">
+      <span class="mod-label">¿Incluir agua y energía inteligente?</span>
+      <div class="tog-wrap">
+        <button class="tog y" onclick="modTog(this,'ms6',true)">Sí</button>
+        <button class="tog n" onclick="modTog(this,'ms6',false)">No</button>
+      </div>
+    </div>
+    <div class="mod-sub" id="ms6">
+      <div class="divider"></div>
+      <div class="chk-grid">
+        <label class="chk-item"><input type="checkbox"> Termotanque eléctrico</label>
+        <label class="chk-item"><input type="checkbox"> Caldera a gas</label>
+        <label class="chk-item"><input type="checkbox"> Bomba de agua / presión</label>
+        <label class="chk-item"><input type="checkbox"> Planta de ósmosis</label>
+        <label class="chk-item"><input type="checkbox"> Monitoreo consumo eléctrico</label>
+        <label class="chk-item"><input type="checkbox"> Monitoreo consumo de agua</label>
+        <label class="chk-item"><input type="checkbox"> Paneles solares</label>
+        <label class="chk-item"><input type="checkbox"> Baterías / almacenamiento</label>
+        <label class="chk-item"><input type="checkbox"> Generador / UPS</label>
+      </div>
+      <div class="q" style="margin-top:10px">
+        <div class="q-label">Observaciones</div>
+        <input class="finput" type="text" placeholder="Proveedor de gas, tipo de instalación, etc.">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-hdr" onclick="tog('s7')">
+    <div class="sec-icon">🪟</div>
+    <span class="sec-title">Aberturas</span>
+    <span class="badge" id="b7">Pendiente</span>
+    <span class="chevron" id="ch7">&#8964;</span>
+  </div>
+  <div class="sec-body" id="s7">
+    <div class="mod-row">
+      <span class="mod-label">¿Incluir control de aberturas?</span>
+      <div class="tog-wrap">
+        <button class="tog y" onclick="modTog(this,'ms7',true)">Sí</button>
+        <button class="tog n" onclick="modTog(this,'ms7',false)">No</button>
+      </div>
+    </div>
+    <div class="mod-sub" id="ms7">
+      <div class="divider"></div>
+      <div class="chk-grid">
+        <label class="chk-item"><input type="checkbox"> Persianas motorizadas</label>
+        <label class="chk-item"><input type="checkbox"> Rollers automáticos</label>
+        <label class="chk-item"><input type="checkbox"> Cortinas automáticas</label>
+        <label class="chk-item"><input type="checkbox"> Sensores apertura ventanas</label>
+        <label class="chk-item"><input type="checkbox"> Control solar (luz / temperatura)</label>
+        <label class="chk-item"><input type="checkbox"> Integración con climatización</label>
+      </div>
+      <div class="q" style="margin-top:10px">
+        <div class="q-label">Cantidad de aberturas a motorizar</div>
+        <div class="radio-row">
+          <button class="rbtn" onclick="pick(this,'abert','1-3')">1 – 3</button>
+          <button class="rbtn" onclick="pick(this,'abert','4-8')">4 – 8</button>
+          <button class="rbtn" onclick="pick(this,'abert','9+')">9 o más</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-hdr" onclick="tog('s8')">
+    <div class="sec-icon">🔊</div>
+    <span class="sec-title">Entretenimiento</span>
+    <span class="badge" id="b8">Pendiente</span>
+    <span class="chevron" id="ch8">&#8964;</span>
+  </div>
+  <div class="sec-body" id="s8">
+    <div class="mod-row">
+      <span class="mod-label">¿Incluir entretenimiento inteligente?</span>
+      <div class="tog-wrap">
+        <button class="tog y" onclick="modTog(this,'ms8',true)">Sí</button>
+        <button class="tog n" onclick="modTog(this,'ms8',false)">No</button>
+      </div>
+    </div>
+    <div class="mod-sub" id="ms8">
+      <div class="divider"></div>
+      <div class="chk-grid">
+        <label class="chk-item"><input type="checkbox"> Audio multiambiente</label>
+        <label class="chk-item"><input type="checkbox"> Home theater dedicado</label>
+        <label class="chk-item"><input type="checkbox"> TV en dormitorios</label>
+        <label class="chk-item"><input type="checkbox"> TV en living / comedor</label>
+        <label class="chk-item"><input type="checkbox"> Control por voz (Siri)</label>
+        <label class="chk-item"><input type="checkbox"> Integración con luces (modo cine)</label>
+      </div>
+      <div class="q" style="margin-top:10px">
+        <div class="q-label">Equipos actuales a integrar</div>
+        <input class="finput" type="text" placeholder="Marca / modelo (si lo sabe)">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-hdr" onclick="tog('s9')">
+    <div class="sec-icon">🤖</div>
+    <span class="sec-title">Automatización práctica</span>
+    <span class="badge" id="b9">Pendiente</span>
+    <span class="chevron" id="ch9">&#8964;</span>
+  </div>
+  <div class="sec-body" id="s9">
+    <div class="mod-row">
+      <span class="mod-label">¿Incluir automatización práctica del hogar?</span>
+      <div class="tog-wrap">
+        <button class="tog y" onclick="modTog(this,'ms9',true)">Sí</button>
+        <button class="tog n" onclick="modTog(this,'ms9',false)">No</button>
+      </div>
+    </div>
+    <div class="mod-sub" id="ms9">
+      <div class="divider"></div>
+      <div class="chk-grid">
+        <label class="chk-item"><input type="checkbox"> Robot aspirador integrado</label>
+        <label class="chk-item"><input type="checkbox"> Riego automático con sensores</label>
+        <label class="chk-item"><input type="checkbox"> Garaje automatizado</label>
+        <label class="chk-item"><input type="checkbox"> Integración con autos eléctricos</label>
+        <label class="chk-item"><input type="checkbox"> Mascotas (alimentador / cámara)</label>
+        <label class="chk-item"><input type="checkbox"> Parrilla / quincho smart</label>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── S10: PRESUPUESTO ── -->
+<div class="section">
+  <div class="sec-hdr" onclick="tog('s10')">
+    <div class="sec-icon">💰</div>
+    <span class="sec-title">Presupuesto y prioridades</span>
+    <span class="badge" id="b10">Pendiente</span>
+    <span class="chevron" id="ch10">&#8964;</span>
+  </div>
+  <div class="sec-body" id="s10">
+    <div class="q">
+      <div class="q-label">Presupuesto estimado para el proyecto</div>
+      <div class="radio-row">
+        <button class="rbtn" onclick="pick(this,'bud','p')">Hasta USD 3.000</button>
+        <button class="rbtn" onclick="pick(this,'bud','m')">USD 3.000 – 8.000</button>
+        <button class="rbtn" onclick="pick(this,'bud','g')">USD 8.000 – 20.000</button>
+        <button class="rbtn" onclick="pick(this,'bud','xg')">Más de USD 20.000</button>
+        <button class="rbtn" onclick="pick(this,'bud','ns')">No definido aún</button>
+      </div>
+    </div>
+    <div class="q">
+      <div class="q-label">¿Prefiere implementar todo de una vez o por etapas?</div>
+      <div class="radio-row">
+        <button class="rbtn" onclick="pick(this,'impl','total')">Todo junto</button>
+        <button class="rbtn" onclick="pick(this,'impl','fases')">Por etapas / fases</button>
+        <button class="rbtn" onclick="pick(this,'impl','ns')">Sin preferencia</button>
+      </div>
+    </div>
+    <div class="q">
+      <div class="q-label">Módulo más prioritario</div>
+      <div class="radio-row">
+        <button class="rbtn" onclick="pick(this,'prio','seg')">Seguridad</button>
+        <button class="rbtn" onclick="pick(this,'prio','luz')">Iluminación</button>
+        <button class="rbtn" onclick="pick(this,'prio','cli')">Climatización</button>
+        <button class="rbtn" onclick="pick(this,'prio','acc')">Accesos</button>
+        <button class="rbtn" onclick="pick(this,'prio','ent')">Entretenimiento</button>
+        <button class="rbtn" onclick="pick(this,'prio','ene')">Energía</button>
+      </div>
+    </div>
+    <div class="q">
+      <div class="q-label">Fecha estimada de inicio</div>
+      <input class="finput" type="text" placeholder="Ej: Agosto 2026 / Al inicio de la obra / Inmediato" oninput="calcProg()">
+    </div>
+    <div class="q">
+      <div class="q-label">Observaciones generales / preguntas para el técnico</div>
+      <textarea class="finput" placeholder="Cualquier detalle, duda o requerimiento especial..." oninput="calcProg()"></textarea>
+    </div>
+  </div>
+</div>
+
+<button class="btn-submit" onclick="enviar()">✅ &nbsp;Finalizar y enviar relevamiento</button>
+
+</div>
+
+<!-- MODAL CONFIRMACIÓN -->
+<div class="modal-bg" id="modal">
+  <div class="modal">
+    <div class="modal-icon">🎉</div>
+    <h2>¡Relevamiento enviado!</h2>
+    <p>Muchas gracias por completar el formulario.<br>El equipo de <strong>Domótica Villegas</strong> se comunicará con usted a la brevedad para coordinar la próxima reunión y presentarle la propuesta personalizada.</p>
+    <p style="margin-top:.5rem;font-size:12px;color:#888">📞 Ante consultas urgentes, contáctenos por WhatsApp.</p>
+    <button class="modal-close" onclick="document.getElementById('modal').classList.remove('show')">Cerrar</button>
+  </div>
+</div>
+
+<script>
+const st={};
+function pick(el,k,v){
+  el.closest('.radio-row').querySelectorAll('.rbtn').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel'); st[k]=v; calcProg();
+}
+function show(id,s){ const e=document.getElementById(id); if(e) e.classList.toggle('show',s); }
+function setEstado(t){
+  ['diseno','obra','habitada'].forEach(x=>show('b_'+x,x===t));
+}
+function tog(id){
+  const b=document.getElementById(id);
+  const c=document.getElementById('ch'+id.replace('s',''));
+  const op=b.classList.toggle('open');
+  if(c) c.classList.toggle('open',op);
+}
+function modTog(el,sub,show2){
+  el.closest('.tog-wrap').querySelectorAll('.tog').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+  const s=document.getElementById(sub);
+  if(s) s.classList.toggle('show',show2);
+  calcProg();
+}
+function calcProg(){
+  const secs=['s1','s2','s3','s4','s5','s6','s7','s8','s9','s10'];
+  let done=0;
+  secs.forEach((id,i)=>{
+    const b=document.getElementById(id);
+    if(!b) return;
+    const sel=b.querySelectorAll('.rbtn.sel,.tog.sel,input[type=checkbox]:checked').length;
+    const txt=Array.from(b.querySelectorAll('input[type=text],textarea')).some(e=>e.value.trim());
+    const ok=sel>0||txt;
+    const badge=document.getElementById('b'+(i+1));
+    if(badge){ badge.textContent=ok?'Completo':'Pendiente'; badge.className='badge'+(ok?' done':''); }
+    if(ok) done++;
+  });
+  const p=Math.round(done/secs.length*100);
+  document.getElementById('fill').style.width=p+'%';
+  document.getElementById('pct').textContent=p+'%';
+}
+function enviar(){
+  document.getElementById('modal').classList.add('show');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>
