@@ -23,7 +23,6 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#F2F2F2;color:#1A1A1A;fo
 .sec-title{font-size:14px;font-weight:600;flex:1;color:#1A1A1A}
 .badge{font-size:11px;padding:2px 9px;border-radius:20px;background:#F2F2F2;color:#6B6B6B;border:1px solid #D9D9D9;white-space:nowrap}
 .badge.done{background:#e2efda;color:#3B6D11;border-color:#9FE1CB}
-.badge.skip{background:#FFF2CC;color:#854F0B;border-color:#FAC775}
 .chevron{font-size:18px;color:#6B6B6B;transition:transform .2s;line-height:1}
 .chevron.open{transform:rotate(180deg)}
 .sec-body{display:none;padding:0 1.1rem 1.1rem}
@@ -56,6 +55,14 @@ textarea.finput{resize:vertical;min-height:80px}
 .mod-sub.show{display:block}
 .nota{font-size:12px;color:#6B6B6B;padding:8px 11px;background:#F8F8F8;border-radius:8px;margin-top:7px;border:1px solid #E8E8E8}
 .nota span{font-weight:600;color:#3D3D3D}
+/* Bloque de instalación actual — aparece solo en habitada/obra */
+.inst-block{display:none;margin-top:10px;padding:10px 13px;background:#FFF8E7;border:1px solid #FAC775;border-radius:8px}
+.inst-block.show{display:block}
+.inst-block .q-label{color:#854F0B;font-size:12px}
+/* Bloque equipo en obra */
+.obra-block{display:none;margin-top:10px;padding:10px 13px;background:#EEF4FF;border:1px solid #B5D4F4;border-radius:8px}
+.obra-block.show{display:block}
+.obra-block .q-label{color:#185FA5;font-size:12px}
 .btn-submit{width:100%;margin-top:1.4rem;padding:13px;background:#3D3D3D;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s}
 .btn-submit:hover{background:#5F5E5A}
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center}
@@ -217,6 +224,36 @@ textarea.finput{resize:vertical;min-height:80px}
         </div>
       </div>
     </div>
+    <div class="divider"></div>
+    <div class="q">
+      <div class="q-label">¿Qué sistema de celular usan en el hogar? *</div>
+      <div class="q-hint">Importante para definir la plataforma de control (HomeKit, Google Home, etc.)</div>
+      <div class="radio-row">
+        <button class="rbtn" onclick="pick(this,'celular','apple')">Apple iPhone (iOS)</button>
+        <button class="rbtn" onclick="pick(this,'celular','android')">Android</button>
+        <button class="rbtn" onclick="pick(this,'celular','mix')">Mixto (Apple y Android)</button>
+      </div>
+    </div>
+    <div class="q">
+      <div class="q-label">¿Tienen mascotas en el hogar?</div>
+      <div class="radio-row">
+        <button class="rbtn" onclick="pick(this,'mascotas','si');show('b_mascotas',true)">Sí</button>
+        <button class="rbtn" onclick="pick(this,'mascotas','no');show('b_mascotas',false)">No</button>
+      </div>
+      <div class="branch" id="b_mascotas">
+        <div class="q-label">¿Qué tipo de mascotas?</div>
+        <div class="chk-grid">
+          <label class="chk-item"><input type="checkbox"> Perro</label>
+          <label class="chk-item"><input type="checkbox"> Gato</label>
+          <label class="chk-item"><input type="checkbox"> Ave</label>
+          <label class="chk-item"><input type="checkbox"> Otro</label>
+        </div>
+        <div class="q" style="margin-top:6px">
+          <div class="q-label">¿Cuántas mascotas?</div>
+          <input class="finput" type="text" placeholder="Ej: 2 perros, 1 gato">
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -238,14 +275,16 @@ textarea.finput{resize:vertical;min-height:80px}
       </div>
       <div class="branch" id="b_diseno">
         <div class="nota"><span>Etapa ideal:</span> permite prever cableado, ductos y tableros desde el inicio.</div>
-        <div class="q" style="margin-top:8px"><div class="q-label">¿Tiene arquitecto o estudio a cargo?</div>
+        <div class="q" style="margin-top:8px">
+          <div class="q-label">¿Tiene arquitecto o estudio a cargo?</div>
           <div class="radio-row">
             <button class="rbtn" onclick="pick(this,'arq','si')">Sí</button>
             <button class="rbtn" onclick="pick(this,'arq','no')">No</button>
           </div>
           <input class="finput" style="margin-top:6px" type="text" placeholder="Nombre del estudio / arquitecto (opcional)">
         </div>
-        <div class="q"><div class="q-label">¿Tiene planos digitales disponibles?</div>
+        <div class="q">
+          <div class="q-label">¿Tiene planos digitales disponibles?</div>
           <div class="radio-row">
             <button class="rbtn" onclick="pick(this,'planos','si')">Sí (DWG / PDF)</button>
             <button class="rbtn" onclick="pick(this,'planos','no')">No aún</button>
@@ -253,8 +292,9 @@ textarea.finput{resize:vertical;min-height:80px}
         </div>
       </div>
       <div class="branch" id="b_obra">
-        <div class="nota"><span>En obra:</span> se puede integrar el cableado coordinando con el electricista.</div>
-        <div class="q" style="margin-top:8px"><div class="q-label">% de avance aproximado de la obra</div>
+        <div class="nota"><span>En construcción:</span> se puede integrar el cableado coordinando con el electricista.</div>
+        <div class="q" style="margin-top:8px">
+          <div class="q-label">% de avance aproximado de la obra</div>
           <div class="radio-row">
             <button class="rbtn" onclick="pick(this,'avance','25')">Menos del 25%</button>
             <button class="rbtn" onclick="pick(this,'avance','50')">25% – 60%</button>
@@ -262,7 +302,8 @@ textarea.finput{resize:vertical;min-height:80px}
             <button class="rbtn" onclick="pick(this,'avance','90')">Más del 80%</button>
           </div>
         </div>
-        <div class="q"><div class="q-label">¿El electricista ya realizó instalaciones?</div>
+        <div class="q">
+          <div class="q-label">¿El electricista ya realizó instalaciones?</div>
           <div class="radio-row">
             <button class="rbtn" onclick="pick(this,'elec','si')">Sí</button>
             <button class="rbtn" onclick="pick(this,'elec','no')">No</button>
@@ -272,14 +313,16 @@ textarea.finput{resize:vertical;min-height:80px}
       </div>
       <div class="branch" id="b_habitada">
         <div class="nota"><span>Vivienda habitada:</span> se priorizan soluciones inalámbricas para evitar obras mayores.</div>
-        <div class="q" style="margin-top:8px"><div class="q-label">¿Acepta pequeñas obras civiles?</div>
+        <div class="q" style="margin-top:8px">
+          <div class="q-label">¿Acepta pequeñas obras civiles?</div>
           <div class="radio-row">
             <button class="rbtn" onclick="pick(this,'obras','si')">Sí, acepto obras</button>
             <button class="rbtn" onclick="pick(this,'obras','no')">Prefiero sin obras</button>
             <button class="rbtn" onclick="pick(this,'obras','min')">Solo obras mínimas</button>
           </div>
         </div>
-        <div class="q"><div class="q-label">Tipo de cableado actual</div>
+        <div class="q">
+          <div class="q-label">Tipo de cableado actual</div>
           <div class="radio-row">
             <button class="rbtn" onclick="pick(this,'cab','mono')">Monofásico 220V</button>
             <button class="rbtn" onclick="pick(this,'cab','tri')">Trifásico</button>
@@ -309,7 +352,13 @@ textarea.finput{resize:vertical;min-height:80px}
   </div>
 </div>
 
-<!-- ── MÓDULOS ── -->
+<!-- ══════════════════════════════════════
+     MÓDULOS — con bloques contextuales
+     estado = 'habitada' → .inst-block
+     estado = 'obra'     → .obra-block
+     ══════════════════════════════════════ -->
+
+<!-- ── ILUMINACIÓN ── -->
 <div class="section">
   <div class="sec-hdr" onclick="tog('s3')">
     <div class="sec-icon">💡</div>
@@ -327,6 +376,41 @@ textarea.finput{resize:vertical;min-height:80px}
     </div>
     <div class="mod-sub" id="ms3">
       <div class="divider"></div>
+      <!-- HABITADA: instalación actual -->
+      <div class="inst-block" id="inst_luz">
+        <div class="q-label">🏠 Instalación actual — ¿qué tipo de teclas / llaves tiene?</div>
+        <div class="chk-grid" style="margin-top:6px">
+          <label class="chk-item"><input type="checkbox"> Teclas simples convencionales</label>
+          <label class="chk-item"><input type="checkbox"> Dimmers analógicos</label>
+          <label class="chk-item"><input type="checkbox"> Teclas dobles / combinadas</label>
+          <label class="chk-item"><input type="checkbox"> Ya tiene alguna tecla smart</label>
+        </div>
+        <div class="q" style="margin-top:8px">
+          <div class="q-label">Marca / modelo de teclas actuales (si lo sabe)</div>
+          <input class="finput" type="text" placeholder="Ej: Bticino, Magic, Siglo XXI, Schneider...">
+        </div>
+        <div class="q">
+          <div class="q-label">¿Cuántos circuitos / puntos de luz tiene la vivienda?</div>
+          <div class="radio-row">
+            <button class="rbtn" onclick="pick(this,'circ_luz','p')">Menos de 10</button>
+            <button class="rbtn" onclick="pick(this,'circ_luz','m')">10 – 20</button>
+            <button class="rbtn" onclick="pick(this,'circ_luz','g')">Más de 20</button>
+            <button class="rbtn" onclick="pick(this,'circ_luz','ns')">No sé</button>
+          </div>
+        </div>
+      </div>
+      <!-- EN OBRA: equipo previsto -->
+      <div class="obra-block" id="obra_luz">
+        <div class="q-label">🏗️ ¿Ya tiene teclas / materiales eléctricos elegidos?</div>
+        <div class="radio-row" style="margin-top:6px">
+          <button class="rbtn" onclick="pick(this,'ob_luz','si');show('ob_luz_det',true)">Sí</button>
+          <button class="rbtn" onclick="pick(this,'ob_luz','no');show('ob_luz_det',false)">No aún</button>
+        </div>
+        <div class="branch" id="ob_luz_det">
+          <div class="q-label" style="margin-top:0">¿Cuál / cuáles?</div>
+          <input class="finput" type="text" placeholder="Ej: Bticino Living Light, Schneider New Unica...">
+        </div>
+      </div>
       <div class="chk-grid">
         <label class="chk-item"><input type="checkbox"> Control por escenas (cine, noche, relax)</label>
         <label class="chk-item"><input type="checkbox"> Control por tecla + celular</label>
@@ -356,6 +440,7 @@ textarea.finput{resize:vertical;min-height:80px}
   </div>
 </div>
 
+<!-- ── CLIMATIZACIÓN ── -->
 <div class="section">
   <div class="sec-hdr" onclick="tog('s4')">
     <div class="sec-icon">🌡️</div>
@@ -373,7 +458,43 @@ textarea.finput{resize:vertical;min-height:80px}
     </div>
     <div class="mod-sub" id="ms4">
       <div class="divider"></div>
-      <div class="q-label" style="margin-bottom:6px">Sistema instalado o a instalar</div>
+      <!-- HABITADA -->
+      <div class="inst-block" id="inst_clima">
+        <div class="q-label">🏠 Equipos de climatización instalados actualmente</div>
+        <div class="chk-grid" style="margin-top:6px">
+          <label class="chk-item"><input type="checkbox"> Splits / minisplit</label>
+          <label class="chk-item"><input type="checkbox"> Aire central con ducto</label>
+          <label class="chk-item"><input type="checkbox"> Caldera a gas</label>
+          <label class="chk-item"><input type="checkbox"> Losa / suelo radiante</label>
+          <label class="chk-item"><input type="checkbox"> Calefactores de tiro balanceado</label>
+          <label class="chk-item"><input type="checkbox"> Estufa / salamandra</label>
+        </div>
+        <div class="q" style="margin-top:8px">
+          <div class="q-label">Marca / modelo y cantidad de equipos</div>
+          <input class="finput" type="text" placeholder="Ej: 2 splits Samsung 3000 frigorías, caldera Peisa...">
+        </div>
+        <div class="q">
+          <div class="q-label">¿Los equipos tienen control remoto o app?</div>
+          <div class="radio-row">
+            <button class="rbtn" onclick="pick(this,'clima_app','si')">Sí</button>
+            <button class="rbtn" onclick="pick(this,'clima_app','no')">No</button>
+            <button class="rbtn" onclick="pick(this,'clima_app','alg')">Algunos</button>
+          </div>
+        </div>
+      </div>
+      <!-- EN OBRA -->
+      <div class="obra-block" id="obra_clima">
+        <div class="q-label">🏗️ ¿Ya tiene equipos de climatización elegidos o contratados?</div>
+        <div class="radio-row" style="margin-top:6px">
+          <button class="rbtn" onclick="pick(this,'ob_clima','si');show('ob_clima_det',true)">Sí</button>
+          <button class="rbtn" onclick="pick(this,'ob_clima','no');show('ob_clima_det',false)">No aún</button>
+        </div>
+        <div class="branch" id="ob_clima_det">
+          <div class="q-label" style="margin-top:0">¿Cuál / cuáles?</div>
+          <input class="finput" type="text" placeholder="Ej: Caldera Peisa + 3 splits Carrier inverter...">
+        </div>
+      </div>
+      <div class="q-label" style="margin-bottom:6px;margin-top:6px">Sistema a instalar / integrar</div>
       <div class="chk-grid">
         <label class="chk-item"><input type="checkbox"> Aire central con ducto</label>
         <label class="chk-item"><input type="checkbox"> Splits / minisplit</label>
@@ -388,14 +509,11 @@ textarea.finput{resize:vertical;min-height:80px}
         <label class="chk-item"><input type="checkbox"> Prioridad ahorro energético</label>
         <label class="chk-item"><input type="checkbox"> Prioridad confort máximo</label>
       </div>
-      <div class="q" style="margin-top:10px">
-        <div class="q-label">Marca / modelo actual y cantidad de ambientes</div>
-        <input class="finput" type="text" placeholder="Ej: Split Samsung 3000 frigorías, 4 ambientes">
-      </div>
     </div>
   </div>
 </div>
 
+<!-- ── SEGURIDAD ── -->
 <div class="section">
   <div class="sec-hdr" onclick="tog('s5')">
     <div class="sec-icon">🔐</div>
@@ -413,6 +531,38 @@ textarea.finput{resize:vertical;min-height:80px}
     </div>
     <div class="mod-sub" id="ms5">
       <div class="divider"></div>
+      <!-- HABITADA -->
+      <div class="inst-block" id="inst_seg">
+        <div class="q-label">🏠 Sistema de seguridad instalado actualmente</div>
+        <div class="chk-grid" style="margin-top:6px">
+          <label class="chk-item"><input type="checkbox"> Alarma con monitoreo</label>
+          <label class="chk-item"><input type="checkbox"> Alarma sin monitoreo</label>
+          <label class="chk-item"><input type="checkbox"> Cámaras (analógicas / IP)</label>
+          <label class="chk-item"><input type="checkbox"> Portero eléctrico simple</label>
+          <label class="chk-item"><input type="checkbox"> Cerradura con llave mecánica</label>
+          <label class="chk-item"><input type="checkbox"> Sin sistema de seguridad</label>
+        </div>
+        <div class="q" style="margin-top:8px">
+          <div class="q-label">Marca / empresa de alarma actual (si tiene)</div>
+          <input class="finput" type="text" placeholder="Ej: DSC, Paradox, Fuerza Segura, ProTec...">
+        </div>
+        <div class="q">
+          <div class="q-label">¿Cuántas cámaras tiene y de qué tipo?</div>
+          <input class="finput" type="text" placeholder="Ej: 3 cámaras Hikvision analógicas exterior...">
+        </div>
+      </div>
+      <!-- EN OBRA -->
+      <div class="obra-block" id="obra_seg">
+        <div class="q-label">🏗️ ¿Ya tiene sistemas de seguridad elegidos o contratados?</div>
+        <div class="radio-row" style="margin-top:6px">
+          <button class="rbtn" onclick="pick(this,'ob_seg','si');show('ob_seg_det',true)">Sí</button>
+          <button class="rbtn" onclick="pick(this,'ob_seg','no');show('ob_seg_det',false)">No aún</button>
+        </div>
+        <div class="branch" id="ob_seg_det">
+          <div class="q-label" style="margin-top:0">¿Cuál / cuáles?</div>
+          <input class="finput" type="text" placeholder="Ej: Alarma DSC, cámaras Hikvision, portero Fermax...">
+        </div>
+      </div>
       <div class="chk-grid">
         <label class="chk-item"><input type="checkbox"> Sistema de alarma integrado</label>
         <label class="chk-item"><input type="checkbox"> Cámaras exteriores</label>
@@ -425,18 +575,11 @@ textarea.finput{resize:vertical;min-height:80px}
         <label class="chk-item"><input type="checkbox"> Sensor monóxido de carbono</label>
         <label class="chk-item"><input type="checkbox"> Sensores puertas / ventanas</label>
       </div>
-      <div class="q" style="margin-top:10px">
-        <div class="q-label">¿Tiene o tuvo sistema de alarma previo?</div>
-        <div class="radio-row">
-          <button class="rbtn" onclick="pick(this,'alarma','si')">Sí</button>
-          <button class="rbtn" onclick="pick(this,'alarma','no')">No</button>
-        </div>
-        <input class="finput" style="margin-top:6px" type="text" placeholder="Empresa / servicio de monitoreo (si tiene)">
-      </div>
     </div>
   </div>
 </div>
 
+<!-- ── AGUA Y ENERGÍA ── -->
 <div class="section">
   <div class="sec-hdr" onclick="tog('s6')">
     <div class="sec-icon">💧</div>
@@ -454,6 +597,42 @@ textarea.finput{resize:vertical;min-height:80px}
     </div>
     <div class="mod-sub" id="ms6">
       <div class="divider"></div>
+      <!-- HABITADA -->
+      <div class="inst-block" id="inst_agua">
+        <div class="q-label">🏠 Instalación de agua y energía actual</div>
+        <div class="chk-grid" style="margin-top:6px">
+          <label class="chk-item"><input type="checkbox"> Termotanque eléctrico</label>
+          <label class="chk-item"><input type="checkbox"> Caldera a gas</label>
+          <label class="chk-item"><input type="checkbox"> Bomba de agua / presión</label>
+          <label class="chk-item"><input type="checkbox"> Planta de ósmosis</label>
+          <label class="chk-item"><input type="checkbox"> Medidor de luz inteligente</label>
+          <label class="chk-item"><input type="checkbox"> Paneles solares instalados</label>
+        </div>
+        <div class="q" style="margin-top:8px">
+          <div class="q-label">Marca / modelo de los equipos principales</div>
+          <input class="finput" type="text" placeholder="Ej: Termotanque Rheem 80L, caldera Peisa Natu 24...">
+        </div>
+        <div class="q">
+          <div class="q-label">¿Tiene tablero eléctrico con disyuntores individuales por circuito?</div>
+          <div class="radio-row">
+            <button class="rbtn" onclick="pick(this,'tablero','si')">Sí</button>
+            <button class="rbtn" onclick="pick(this,'tablero','no')">No</button>
+            <button class="rbtn" onclick="pick(this,'tablero','ns')">No sé</button>
+          </div>
+        </div>
+      </div>
+      <!-- EN OBRA -->
+      <div class="obra-block" id="obra_agua">
+        <div class="q-label">🏗️ ¿Ya tiene equipos de agua / energía elegidos o contratados?</div>
+        <div class="radio-row" style="margin-top:6px">
+          <button class="rbtn" onclick="pick(this,'ob_agua','si');show('ob_agua_det',true)">Sí</button>
+          <button class="rbtn" onclick="pick(this,'ob_agua','no');show('ob_agua_det',false)">No aún</button>
+        </div>
+        <div class="branch" id="ob_agua_det">
+          <div class="q-label" style="margin-top:0">¿Cuál / cuáles?</div>
+          <input class="finput" type="text" placeholder="Ej: Caldera Peisa, termotanque Rheem, bomba Grundfos...">
+        </div>
+      </div>
       <div class="chk-grid">
         <label class="chk-item"><input type="checkbox"> Termotanque eléctrico</label>
         <label class="chk-item"><input type="checkbox"> Caldera a gas</label>
@@ -473,6 +652,7 @@ textarea.finput{resize:vertical;min-height:80px}
   </div>
 </div>
 
+<!-- ── ABERTURAS ── -->
 <div class="section">
   <div class="sec-hdr" onclick="tog('s7')">
     <div class="sec-icon">🪟</div>
@@ -490,6 +670,43 @@ textarea.finput{resize:vertical;min-height:80px}
     </div>
     <div class="mod-sub" id="ms7">
       <div class="divider"></div>
+      <!-- HABITADA -->
+      <div class="inst-block" id="inst_ab">
+        <div class="q-label">🏠 Aberturas existentes en la vivienda</div>
+        <div class="chk-grid" style="margin-top:6px">
+          <label class="chk-item"><input type="checkbox"> Persianas de PVC / aluminio manuales</label>
+          <label class="chk-item"><input type="checkbox"> Rollers manuales</label>
+          <label class="chk-item"><input type="checkbox"> Cortinas de tela</label>
+          <label class="chk-item"><input type="checkbox"> Celosías fijas</label>
+          <label class="chk-item"><input type="checkbox"> Portón de garaje manual</label>
+          <label class="chk-item"><input type="checkbox"> Alguna persiana motorizada ya instalada</label>
+        </div>
+        <div class="q" style="margin-top:8px">
+          <div class="q-label">¿De qué material son las persianas / rollers actuales?</div>
+          <div class="radio-row">
+            <button class="rbtn" onclick="pick(this,'mat_ab','pvc')">PVC</button>
+            <button class="rbtn" onclick="pick(this,'mat_ab','alum')">Aluminio</button>
+            <button class="rbtn" onclick="pick(this,'mat_ab','tela')">Tela / screen</button>
+            <button class="rbtn" onclick="pick(this,'mat_ab','mix')">Mixto</button>
+          </div>
+        </div>
+        <div class="q">
+          <div class="q-label">¿Cuántas aberturas / persianas tiene en total?</div>
+          <input class="finput" type="text" placeholder="Ej: 6 persianas de aluminio, 3 rollers de tela...">
+        </div>
+      </div>
+      <!-- EN OBRA -->
+      <div class="obra-block" id="obra_ab">
+        <div class="q-label">🏗️ ¿Ya tiene aberturas / persianas elegidas o contratadas?</div>
+        <div class="radio-row" style="margin-top:6px">
+          <button class="rbtn" onclick="pick(this,'ob_ab','si');show('ob_ab_det',true)">Sí</button>
+          <button class="rbtn" onclick="pick(this,'ob_ab','no');show('ob_ab_det',false)">No aún</button>
+        </div>
+        <div class="branch" id="ob_ab_det">
+          <div class="q-label" style="margin-top:0">¿Cuál / cuáles? (marca, material, cantidad)</div>
+          <input class="finput" type="text" placeholder="Ej: 8 persianas de aluminio Alumax, 2 portones Portaltech...">
+        </div>
+      </div>
       <div class="chk-grid">
         <label class="chk-item"><input type="checkbox"> Persianas motorizadas</label>
         <label class="chk-item"><input type="checkbox"> Rollers automáticos</label>
@@ -510,6 +727,7 @@ textarea.finput{resize:vertical;min-height:80px}
   </div>
 </div>
 
+<!-- ── ENTRETENIMIENTO ── -->
 <div class="section">
   <div class="sec-hdr" onclick="tog('s8')">
     <div class="sec-icon">🔊</div>
@@ -527,6 +745,34 @@ textarea.finput{resize:vertical;min-height:80px}
     </div>
     <div class="mod-sub" id="ms8">
       <div class="divider"></div>
+      <!-- HABITADA -->
+      <div class="inst-block" id="inst_ent">
+        <div class="q-label">🏠 Equipos de audio y video actuales</div>
+        <div class="chk-grid" style="margin-top:6px">
+          <label class="chk-item"><input type="checkbox"> Smart TV (con app)</label>
+          <label class="chk-item"><input type="checkbox"> TV convencional</label>
+          <label class="chk-item"><input type="checkbox"> Equipo de música / parlantes</label>
+          <label class="chk-item"><input type="checkbox"> Apple TV / Chromecast / Fire TV</label>
+          <label class="chk-item"><input type="checkbox"> Sistema de sonido 5.1 / 7.1</label>
+          <label class="chk-item"><input type="checkbox"> Proyector</label>
+        </div>
+        <div class="q" style="margin-top:8px">
+          <div class="q-label">Marca / modelo de equipos principales</div>
+          <input class="finput" type="text" placeholder="Ej: Samsung 65' Smart TV, Apple TV 4K, Sonos...">
+        </div>
+      </div>
+      <!-- EN OBRA -->
+      <div class="obra-block" id="obra_ent">
+        <div class="q-label">🏗️ ¿Ya tiene equipos de audio / video elegidos?</div>
+        <div class="radio-row" style="margin-top:6px">
+          <button class="rbtn" onclick="pick(this,'ob_ent','si');show('ob_ent_det',true)">Sí</button>
+          <button class="rbtn" onclick="pick(this,'ob_ent','no');show('ob_ent_det',false)">No aún</button>
+        </div>
+        <div class="branch" id="ob_ent_det">
+          <div class="q-label" style="margin-top:0">¿Cuál / cuáles?</div>
+          <input class="finput" type="text" placeholder="Ej: Samsung QLED 75', sistema Sonos, Apple TV...">
+        </div>
+      </div>
       <div class="chk-grid">
         <label class="chk-item"><input type="checkbox"> Audio multiambiente</label>
         <label class="chk-item"><input type="checkbox"> Home theater dedicado</label>
@@ -535,14 +781,11 @@ textarea.finput{resize:vertical;min-height:80px}
         <label class="chk-item"><input type="checkbox"> Control por voz (Siri)</label>
         <label class="chk-item"><input type="checkbox"> Integración con luces (modo cine)</label>
       </div>
-      <div class="q" style="margin-top:10px">
-        <div class="q-label">Equipos actuales a integrar</div>
-        <input class="finput" type="text" placeholder="Marca / modelo (si lo sabe)">
-      </div>
     </div>
   </div>
 </div>
 
+<!-- ── AUTOMATIZACIÓN PRÁCTICA ── -->
 <div class="section">
   <div class="sec-hdr" onclick="tog('s9')">
     <div class="sec-icon">🤖</div>
@@ -560,6 +803,32 @@ textarea.finput{resize:vertical;min-height:80px}
     </div>
     <div class="mod-sub" id="ms9">
       <div class="divider"></div>
+      <!-- HABITADA -->
+      <div class="inst-block" id="inst_prac">
+        <div class="q-label">🏠 ¿Tiene alguno de estos equipos actualmente?</div>
+        <div class="chk-grid" style="margin-top:6px">
+          <label class="chk-item"><input type="checkbox"> Robot aspirador (Roomba u otro)</label>
+          <label class="chk-item"><input type="checkbox"> Sistema de riego manual</label>
+          <label class="chk-item"><input type="checkbox"> Portón de garaje eléctrico</label>
+          <label class="chk-item"><input type="checkbox"> Auto eléctrico / híbrido</label>
+        </div>
+        <div class="q" style="margin-top:8px">
+          <div class="q-label">Marca / modelo (si lo sabe)</div>
+          <input class="finput" type="text" placeholder="Ej: Roomba i7, portón Puertas y Portones SA...">
+        </div>
+      </div>
+      <!-- EN OBRA -->
+      <div class="obra-block" id="obra_prac">
+        <div class="q-label">🏗️ ¿Ya tiene equipos de automatización previstos?</div>
+        <div class="radio-row" style="margin-top:6px">
+          <button class="rbtn" onclick="pick(this,'ob_prac','si');show('ob_prac_det',true)">Sí</button>
+          <button class="rbtn" onclick="pick(this,'ob_prac','no');show('ob_prac_det',false)">No aún</button>
+        </div>
+        <div class="branch" id="ob_prac_det">
+          <div class="q-label" style="margin-top:0">¿Cuál / cuáles?</div>
+          <input class="finput" type="text" placeholder="Ej: Portón automatizado, sistema de riego por goteo...">
+        </div>
+      </div>
       <div class="chk-grid">
         <label class="chk-item"><input type="checkbox"> Robot aspirador integrado</label>
         <label class="chk-item"><input type="checkbox"> Riego automático con sensores</label>
@@ -572,7 +841,7 @@ textarea.finput{resize:vertical;min-height:80px}
   </div>
 </div>
 
-<!-- ── S10: PRESUPUESTO ── -->
+<!-- ── PRESUPUESTO ── -->
 <div class="section">
   <div class="sec-hdr" onclick="tog('s10')">
     <div class="sec-icon">💰</div>
@@ -621,11 +890,74 @@ textarea.finput{resize:vertical;min-height:80px}
   </div>
 </div>
 
-<button class="btn-submit" onclick="enviar()">✅ &nbsp;Finalizar y enviar relevamiento</button>
-
+<!-- ── S11: MASCOTAS (visible solo si tienen mascotas) ── -->
+<div class="section" id="sec_mascotas" style="display:none">
+  <div class="sec-hdr" onclick="tog('s11')">
+    <div class="sec-icon">🐾</div>
+    <span class="sec-title">Domótica para mascotas</span>
+    <span class="badge" id="b11">Pendiente</span>
+    <span class="chevron" id="ch11">&#8964;</span>
+  </div>
+  <div class="sec-body" id="s11">
+    <div class="nota"><span>¡Buenas noticias!</span> La domótica también puede mejorar la vida de sus mascotas con automatizaciones específicas.</div>
+    <div class="q">
+      <div class="q-label">¿Les interesa automatizar la alimentación de las mascotas?</div>
+      <div class="q-hint">Dispensadores inteligentes con horarios programados y control desde el celular.</div>
+      <div class="radio-row">
+        <button class="rbtn" onclick="pick(this,'dom_alim','si');show('b_alim',true)">Sí</button>
+        <button class="rbtn" onclick="pick(this,'dom_alim','no');show('b_alim',false)">No</button>
+        <button class="rbtn" onclick="pick(this,'dom_alim','info')">Quiero más información</button>
+      </div>
+      <div class="branch" id="b_alim">
+        <div class="q-label">¿Cuántas mascotas necesitan alimentación automática?</div>
+        <div class="radio-row">
+          <button class="rbtn" onclick="pick(this,'cant_alim','1')">1</button>
+          <button class="rbtn" onclick="pick(this,'cant_alim','2')">2</button>
+          <button class="rbtn" onclick="pick(this,'cant_alim','3+')">3 o más</button>
+        </div>
+        <div class="q" style="margin-top:8px">
+          <div class="q-label">¿Tienen horarios fijos de alimentación actualmente?</div>
+          <input class="finput" type="text" placeholder="Ej: 7:00 hs y 19:00 hs, 3 veces por día...">
+        </div>
+      </div>
+    </div>
+    <div class="q">
+      <div class="q-label">¿Les interesa automatizar el acceso al agua de las mascotas?</div>
+      <div class="q-hint">Fuentes inteligentes con filtro, sensor de nivel y alertas cuando el agua está baja.</div>
+      <div class="radio-row">
+        <button class="rbtn" onclick="pick(this,'dom_agua','si');show('b_agua_masc',true)">Sí</button>
+        <button class="rbtn" onclick="pick(this,'dom_agua','no');show('b_agua_masc',false)">No</button>
+        <button class="rbtn" onclick="pick(this,'dom_agua','info')">Quiero más información</button>
+      </div>
+      <div class="branch" id="b_agua_masc">
+        <div class="chk-grid">
+          <label class="chk-item"><input type="checkbox"> Fuente con sensor de nivel</label>
+          <label class="chk-item"><input type="checkbox"> Alerta nivel bajo en el celular</label>
+          <label class="chk-item"><input type="checkbox"> Filtro integrado con control smart</label>
+          <label class="chk-item"><input type="checkbox"> Bebedero exterior con válvula automática</label>
+        </div>
+      </div>
+    </div>
+    <div class="q">
+      <div class="q-label">¿Les interesaría alguna de estas funciones adicionales para mascotas?</div>
+      <div class="chk-grid">
+        <label class="chk-item"><input type="checkbox"> Cámara de monitoreo con audio (ver mascota desde celular)</label>
+        <label class="chk-item"><input type="checkbox"> Puerta / gatera automatizada con chip de mascota</label>
+        <label class="chk-item"><input type="checkbox"> Sensor de actividad / movimiento para mascotas</label>
+        <label class="chk-item"><input type="checkbox"> Alerta si la mascota sale del perímetro del hogar</label>
+      </div>
+    </div>
+    <div class="q">
+      <div class="q-label">Observaciones sobre sus mascotas</div>
+      <input class="finput" type="text" placeholder="Raza, tamaño, necesidades especiales, etc.">
+    </div>
+  </div>
 </div>
 
-<!-- MODAL CONFIRMACIÓN -->
+<button class="btn-submit" onclick="enviar()">✅ &nbsp;Finalizar y enviar relevamiento</button>
+</div>
+
+<!-- MODAL -->
 <div class="modal-bg" id="modal">
   <div class="modal">
     <div class="modal-icon">🎉</div>
@@ -638,29 +970,54 @@ textarea.finput{resize:vertical;min-height:80px}
 
 <script>
 const st={};
+
 function pick(el,k,v){
   el.closest('.radio-row').querySelectorAll('.rbtn').forEach(b=>b.classList.remove('sel'));
   el.classList.add('sel'); st[k]=v; calcProg();
 }
-function show(id,s){ const e=document.getElementById(id); if(e) e.classList.toggle('show',s); }
-function setEstado(t){
-  ['diseno','obra','habitada'].forEach(x=>show('b_'+x,x===t));
+
+function show(id,s){
+  const e=document.getElementById(id);
+  if(e) e.classList.toggle('show',s);
 }
+
+function setEstado(tipo){
+  ['diseno','obra','habitada'].forEach(x=>show('b_'+x,x===tipo));
+  st.estado=tipo;
+  // Actualizar bloques contextuales en todos los módulos
+  const instIds=['inst_luz','inst_clima','inst_seg','inst_agua','inst_ab','inst_ent','inst_prac'];
+  const obraIds=['obra_luz','obra_clima','obra_seg','obra_agua','obra_ab','obra_ent','obra_prac'];
+  instIds.forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.classList.toggle('show', tipo==='habitada');
+  });
+  obraIds.forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.classList.toggle('show', tipo==='obra');
+  });
+  calcProg();
+}
+
 function tog(id){
   const b=document.getElementById(id);
-  const c=document.getElementById('ch'+id.replace('s',''));
+  const ch=document.getElementById('ch'+id.replace('s',''));
   const op=b.classList.toggle('open');
-  if(c) c.classList.toggle('open',op);
+  if(ch) ch.classList.toggle('open',op);
 }
-function modTog(el,sub,show2){
+
+function modTog(el,sub,showSub){
   el.closest('.tog-wrap').querySelectorAll('.tog').forEach(b=>b.classList.remove('sel'));
   el.classList.add('sel');
   const s=document.getElementById(sub);
-  if(s) s.classList.toggle('show',show2);
+  if(s) s.classList.toggle('show',showSub);
   calcProg();
 }
+
 function calcProg(){
+  const tieneMascotas=st.mascotas==='si';
+  document.getElementById('sec_mascotas').style.display=tieneMascotas?'block':'none';
   const secs=['s1','s2','s3','s4','s5','s6','s7','s8','s9','s10'];
+  if(tieneMascotas) secs.push('s11');
   let done=0;
   secs.forEach((id,i)=>{
     const b=document.getElementById(id);
@@ -669,13 +1026,14 @@ function calcProg(){
     const txt=Array.from(b.querySelectorAll('input[type=text],textarea')).some(e=>e.value.trim());
     const ok=sel>0||txt;
     const badge=document.getElementById('b'+(i+1));
-    if(badge){ badge.textContent=ok?'Completo':'Pendiente'; badge.className='badge'+(ok?' done':''); }
+    if(badge){badge.textContent=ok?'Completo':'Pendiente';badge.className='badge'+(ok?' done':'');}
     if(ok) done++;
   });
   const p=Math.round(done/secs.length*100);
   document.getElementById('fill').style.width=p+'%';
   document.getElementById('pct').textContent=p+'%';
 }
+
 function enviar(){
   document.getElementById('modal').classList.add('show');
   window.scrollTo({top:0,behavior:'smooth'});
