@@ -203,7 +203,7 @@ textarea.finput{resize:vertical;min-height:80px}
         <label class="chk-item"><input type="checkbox"> Rutina llegada a casa</label>
         <label class="chk-item"><input type="checkbox"> Rutina "buenas noches"</label>
         <label class="chk-item"><input type="checkbox"> Modo vacaciones / seguridad</label>
-        <label class="chk-item"><input type="checkbox"> Riego del jardín</label>
+        <label class="chk-item"><input type="checkbox"> Riego automático del jardín</label>
         <label class="chk-item"><input type="checkbox"> Apertura automática del garaje</label>
       </div>
     </div>
@@ -841,6 +841,78 @@ textarea.finput{resize:vertical;min-height:80px}
   </div>
 </div>
 
+<!-- ── S10: PRIORIDADES Y ASISTENTE ── -->
+<div class="section">
+  <div class="sec-hdr" onclick="tog('s10')">
+    <div class="sec-icon">🎯</div>
+    <span class="sec-title">Prioridades y asistente de voz</span>
+    <span class="badge" id="b10">Pendiente</span>
+    <span class="chevron" id="ch10">&#8964;</span>
+  </div>
+  <div class="sec-body" id="s10">
+    <div class="q">
+      <div class="q-label">¿Prefiere implementar todo de una vez o por etapas?</div>
+      <div class="radio-row">
+        <button class="rbtn" onclick="pick(this,'impl','total')">Todo junto</button>
+        <button class="rbtn" onclick="pick(this,'impl','fases')">Por etapas / fases</button>
+        <button class="rbtn" onclick="pick(this,'impl','ns')">Sin preferencia</button>
+      </div>
+    </div>
+    <div class="q">
+      <div class="q-label">Módulo más prioritario para comenzar</div>
+      <div class="radio-row">
+        <button class="rbtn" onclick="pick(this,'prio','seg')">Seguridad</button>
+        <button class="rbtn" onclick="pick(this,'prio','luz')">Iluminación</button>
+        <button class="rbtn" onclick="pick(this,'prio','cli')">Climatización</button>
+        <button class="rbtn" onclick="pick(this,'prio','acc')">Accesos</button>
+        <button class="rbtn" onclick="pick(this,'prio','ent')">Entretenimiento</button>
+        <button class="rbtn" onclick="pick(this,'prio','ene')">Energía</button>
+      </div>
+    </div>
+    <div class="q">
+      <div class="q-label">Fecha estimada de inicio</div>
+      <input class="finput" type="text" placeholder="Ej: Agosto 2026 / Al inicio de la obra / Inmediato" oninput="calcProg()">
+    </div>
+    <div class="divider"></div>
+    <div class="q">
+      <div class="q-label">¿Qué asistente de voz prefieren usar? *</div>
+      <div class="q-hint">Define la plataforma central del sistema y la compatibilidad de los dispositivos.</div>
+      <div class="radio-row">
+        <button class="rbtn" onclick="pick(this,'asistente','siri')">Siri (Apple)</button>
+        <button class="rbtn" onclick="pick(this,'asistente','alexa')">Alexa (Amazon)</button>
+        <button class="rbtn" onclick="pick(this,'asistente','google')">Google Home</button>
+        <button class="rbtn" onclick="pick(this,'asistente','mix')">Más de uno</button>
+        <button class="rbtn" onclick="pick(this,'asistente','ns')">No sé / Indiferente</button>
+      </div>
+    </div>
+    <div class="q">
+      <div class="q-label">¿Ya tienen algún dispositivo de asistente instalado?</div>
+      <div class="radio-row">
+        <button class="rbtn" onclick="pick(this,'asist_equip','si');show('b_asist_eq',true)">Sí</button>
+        <button class="rbtn" onclick="pick(this,'asist_equip','no');show('b_asist_eq',false)">No</button>
+      </div>
+      <div class="branch" id="b_asist_eq">
+        <div class="chk-grid">
+          <label class="chk-item"><input type="checkbox"> Apple HomePod / HomePod mini</label>
+          <label class="chk-item"><input type="checkbox"> Amazon Echo / Echo Dot</label>
+          <label class="chk-item"><input type="checkbox"> Google Nest / Google Home</label>
+          <label class="chk-item"><input type="checkbox"> Apple TV (funciona como hub)</label>
+          <label class="chk-item"><input type="checkbox"> Otro</label>
+        </div>
+        <div class="q" style="margin-top:6px">
+          <div class="q-label">Modelo / detalle</div>
+          <input class="finput" type="text" placeholder="Ej: Echo Dot 4ta gen, HomePod mini blanco...">
+        </div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="q">
+      <div class="q-label">Observaciones generales / preguntas para el técnico</div>
+      <textarea class="finput" placeholder="Cualquier detalle, duda o requerimiento especial..." oninput="calcProg()"></textarea>
+    </div>
+  </div>
+</div>
+
 <!-- ── S11: MASCOTAS (visible solo si tienen mascotas) ── -->
 <div class="section" id="sec_mascotas" style="display:none">
   <div class="sec-hdr" onclick="tog('s11')">
@@ -967,8 +1039,8 @@ function modTog(el,sub,showSub){
 function calcProg(){
   const tieneMascotas=st.mascotas==='si';
   document.getElementById('sec_mascotas').style.display=tieneMascotas?'block':'none';
-  const secs=['s1','s2','s3','s4','s5','s6','s7','s8','s9'];
-  if(tieneMascotas) secs.push('s10');
+  const secs=['s1','s2','s3','s4','s5','s6','s7','s8','s9','s10'];
+  if(tieneMascotas) secs.push('s11');
   let done=0;
   secs.forEach((id,i)=>{
     const b=document.getElementById(id);
